@@ -25,18 +25,20 @@ public class CreateTerrain : MonoBehaviour
 
         int imageHeight = image.Height;
         int imageWidth = image.Width;
+        Debug.Log(imageWidth + " " + imageHeight);
+        int terrainResolution = terrainData.heightmapResolution;
 
-        if (imageHeight < 1024 || imageWidth < 1024)
+        Debug.Log(terrainResolution);
+
+        if (imageHeight < terrainResolution - 1 || imageWidth < terrainResolution - 1)
             Debug.LogError("Image to small");
         else
         {
-            int terrainResolution = terrainData.heightmapResolution;
-
             terrainData.size = new Vector3(terrainResolution - 1, 100, terrainResolution - 1);
 
             float[,] data = new float[terrainResolution - 1, terrainResolution - 1];
 
-            Debug.Log("height = " + data.Length + " width = ");
+            //Debug.Log("height = " + data.Length + " width = ");
 
             for (int y = 0; y < terrainResolution - 1; y++)
             {
