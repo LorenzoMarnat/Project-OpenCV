@@ -41,11 +41,11 @@ public class WaterShed : MonoBehaviour
         Mat structuringElement = CvInvoke.GetStructuringElement(ElementShape.Ellipse, new Size(5, 5), anchor);
 
         //noise removal
-        Image<Gray, byte> opening = new Image<Gray, byte>(imgBinarize.Width, imgBinarize.Height);
+        Image<Bgr, byte> opening = new Image<Bgr, byte>(imgBinarize.Width, imgBinarize.Height);
         CvInvoke.MorphologyEx(imgBinarize, opening, MorphOp.Open, structuringElement, new Point(-1, -1), 2, BorderType.Constant, new MCvScalar(0));
 
         // sure background area
-        Image<Gray, byte> dilate = new Image<Gray, byte>(opening.Width, opening.Height);
+        Image<Bgr, byte> dilate = new Image<Bgr, byte>(opening.Width, opening.Height);
         CvInvoke.Dilate(opening, dilate, structuringElement, new Point(-1, -1), 3, BorderType.Constant, new MCvScalar(0));
 
         //finding sure foreground area
@@ -61,7 +61,7 @@ public class WaterShed : MonoBehaviour
         Point maxLoc;
         CvInvoke.MinMaxLoc(distTransform, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
 
-        Image<Gray, byte> sure_fg = new Image<Gray, byte>(distTransform.Width, distTransform.Height);
+        Image<Bgr, byte> sure_fg = new Image<Bgr, byte>(distTransform.Width, distTransform.Height);
         CvInvoke.Threshold(distTransform, sure_fg, 0.7 * maxVal, 255, 0);
 
         // Finding unknown region
@@ -79,27 +79,37 @@ public class WaterShed : MonoBehaviour
         CvInvoke.FindContours(distTransform_8u, contours, hierarchy, RetrType.External, ChainApproxMethod.ChainApproxSimple);
 
         //Marker labelling
-        Mat markers = Mat.Zeros(distTransform_8u.Rows, distTransform_8u.Cols, DepthType.Cv8S, 1);
+        Mat markers = Mat.Zeros(distTransform_8u.Rows, distTransform_8u.Cols, DepthType.Cv8S, 3);
 
         matSure_fg.ConvertTo(matSure_fg, DepthType.Cv8U);
 
-        Debug.Log(matSure_fg.Depth + matSure_fg.NumberOfChannels + " " + markers.Depth + markers.NumberOfChannels);
+
         int nLabels = CvInvoke.ConnectedComponents(matSure_fg, markers);
-        Debug.Log(nLabels);
+        Debug.Log("nLabels : " +nLabels);
+        
+
         markers += 1;
 
-        CvInvoke.Watershed(matImage, markers);
+        Image<Gray, byte> imgUnknown = matUnknown.ToImage<Gray, byte>();
 
+        Image<Gray, byte> imgMarkers = markers.ToImage<Gray, byte>();
         for (int i = 0; i < markers.Rows; i++)
         {
             for (int j = 0; j < markers.Cols; j++)
             {
-
+                if(imgUnknown.Data[i,j,0] ==255)
+                {
+                    imgMarkers.Data[i, j, 0] = 0;
+                }
             }
         }
-        
-        Image<Bgr, byte> imgMarkers = markers.ToImage<Bgr, byte>();
 
+        Debug.Log(img.Mat.Depth + img.NumberOfChannels + " " + imgMarkers.Mat.Depth + imgMarkers.NumberOfChannels);
+        matImage.ConvertTo(matImage, DepthType.Cv8U);
+        markers = imgMarkers.Mat;
+        markers.ConvertTo(markers, DepthType.Cv32S);
+        CvInvoke.Watershed(matImage, markers);
+        markers.ConvertTo(markers, DepthType.Cv8U);
 
         // Show output image
         //CvInvoke.Imshow("Image", img);
@@ -107,10 +117,11 @@ public class WaterShed : MonoBehaviour
         //CvInvoke.Imshow("imgBinarize", imgBinarize);
         //CvInvoke.Imshow("opening", opening);
         //CvInvoke.Imshow("dilate", dilate);
-        CvInvoke.Imshow("matUnknown", matUnknown.ToImage<Bgr,byte>() *10000);
+        CvInvoke.Imshow("matUnknown",  imgUnknown*10000);
         CvInvoke.Imshow("distTransform", distTransform);
         CvInvoke.Imshow("sure_fg", sure_fg);
         CvInvoke.Imshow("matSure_fg", matSure_fg.ToImage<Bgr, byte>());
-        CvInvoke.Imshow("imgMarkers", imgMarkers *1000);
+        CvInvoke.Imshow("imgMarkers", imgMarkers*10);
+        CvInvoke.Imshow("markers", markers*10);
     }
 }
