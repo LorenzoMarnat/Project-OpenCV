@@ -10,6 +10,7 @@ public class CreateTerrain : MonoBehaviour
 {
     //[SerializeField] TerrainData terrainData = null;
     [SerializeField] string fileName = null;
+    [SerializeField] bool inverse = false;
 
     private Image<Gray, byte> image;
     private Terrain terrain;
@@ -44,7 +45,10 @@ public class CreateTerrain : MonoBehaviour
             {
                 for (int x = 0; x < terrainResolution - 1; x++)
                 {
-                    data[x, y] = (255 - image.Data[x, y, 0]) / 255f;
+                    if(!inverse)
+                        data[x, y] = image.Data[x, y, 0] / 255f;
+                    else
+                        data[x, y] = (255 - image.Data[x, y, 0]) / 255f;
                 }
             }
             terrainData.SetHeights(0, 0, data);
