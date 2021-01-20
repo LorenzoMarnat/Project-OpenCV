@@ -44,7 +44,7 @@ public class CreateTerrain : MonoBehaviour
             {
                 for (int x = 0; x < terrainResolution - 1; x++)
                 {
-                    data[x, y] = image.Data[x, y, 0] / 255f;
+                    data[x, y] = (255 - image.Data[x, y, 0]) / 255f;
                 }
             }
             terrainData.SetHeights(0, 0, data);
