@@ -21,7 +21,7 @@ public class WaterShed
     public static Image<Gray,byte> TestWaterShed()
     {
         //Load Image into Mat
-        Mat matImage = new Mat("balka.jpg");
+        Mat matImage = new Mat("Jaguar.jpg");
 
         //Convert Mat Bgr to Gray
         Mat matGray = new Mat(matImage.Rows, matImage.Cols, DepthType.Cv8U, 1);
@@ -42,11 +42,11 @@ public class WaterShed
 
         //noise removal
         Image<Bgr, byte> opening = new Image<Bgr, byte>(imgBinarize.Width, imgBinarize.Height);
-        CvInvoke.MorphologyEx(imgBinarize, opening, MorphOp.Open, structuringElement, new Point(-1, -1), 2, BorderType.Constant, new MCvScalar(0));
+        CvInvoke.MorphologyEx(imgBinarize, opening, MorphOp.Open, structuringElement, new Point(-1, -1), 10, BorderType.Constant, new MCvScalar(0));
 
         // sure background area
         Image<Bgr, byte> dilate = new Image<Bgr, byte>(opening.Width, opening.Height);
-        CvInvoke.Dilate(opening, dilate, structuringElement, new Point(-1, -1), 10, BorderType.Constant, new MCvScalar(0));
+        CvInvoke.Dilate(opening, dilate, structuringElement, new Point(-1, -1), 65, BorderType.Constant, new MCvScalar(0));
 
         //finding sure foreground area
         Mat labels = new Mat();
@@ -61,8 +61,11 @@ public class WaterShed
         Point maxLoc;
         CvInvoke.MinMaxLoc(distTransform, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
 
+        Mat distTransform_8u = new Mat();
+        distTransform.ConvertTo(distTransform_8u, DepthType.Cv8U);
+
         Image<Bgr, byte> sure_fg = new Image<Bgr, byte>(distTransform.Width, distTransform.Height);
-        CvInvoke.Threshold(distTransform, sure_fg, 0.5 * maxVal, 255, 0);
+        CvInvoke.Threshold(distTransform, sure_fg, 0.2 * maxVal, 255, ThresholdType.Binary);
 
         // Finding unknown region
         Mat matSure_fg = new Mat(sure_fg.Rows, sure_fg.Cols, DepthType.Cv8U, 3);
@@ -70,8 +73,7 @@ public class WaterShed
         Mat matUnknown = new Mat();
         CvInvoke.Subtract(dilate.Mat, matSure_fg, matUnknown);
 
-        Mat distTransform_8u = new Mat();
-        distTransform.ConvertTo(distTransform_8u, DepthType.Cv8U);
+        
 
         // Find total markers
         Mat hierarchy = new Mat();
@@ -123,7 +125,7 @@ public class WaterShed
         //CvInvoke.Imshow("sure_fg", sure_fg);
         //CvInvoke.Imshow("matSure_fg", matSure_fg.ToImage<Bgr, byte>());
         //CvInvoke.Imshow("imgMarkers", imgMarkers*10);
-        //CvInvoke.Imshow("markers", imgMarkers*10);
+        CvInvoke.Imshow("markers", imgMarkers*10);
 
         return imgMarkers;
     }
