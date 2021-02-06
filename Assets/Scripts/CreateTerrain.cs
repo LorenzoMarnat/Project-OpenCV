@@ -53,7 +53,7 @@ public class CreateTerrain : MonoBehaviour
         }
 
         Image<Gray, byte> ws = WaterShed.TestWaterShed();
-        CvInvoke.Imshow("markers", ws);
+        //CvInvoke.Imshow("markers", ws);
 
         int k = 0;
         if (ws.Rows >= terrainResolution - 1 && ws.Cols >= terrainResolution - 1)
@@ -63,16 +63,19 @@ public class CreateTerrain : MonoBehaviour
                 for (int j = 0; j < terrainResolution - 1; j += 10)
                 {
                     RaycastHit hit;
-                    if (/*k%1024 == 0 &&*/ Physics.Raycast(new Vector3(i,1000,j), Vector3.down,out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
+                    if (Physics.Raycast(new Vector3(i,1000,j), Vector3.down,out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
                     {
-                        Instantiate(prefabs[0], hit.point, Quaternion.identity);
+                        Instantiate(PickPrefab(ws.Data[i,j,0]), hit.point, Quaternion.identity);
                     }
                     k++;
                 }
             }
         }
     }
-
+    private GameObject PickPrefab(int index)
+    {
+        return prefabs[index % prefabs.Length];
+    }
     // Update is called once per frame
     void Update()
     {

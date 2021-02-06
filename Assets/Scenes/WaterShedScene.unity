@@ -244,7 +244,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 662933777}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 104.2, z: 0}
+  m_LocalPosition: {x: 80.4, y: 104.2, z: 87.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1775071007}
@@ -559,10 +559,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca3e387c6a4d814e974f0a0800f0469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: balka.jpg
+  fileName: massieu.jpg
   inverse: 0
   prefabs:
   - {fileID: 192044, guid: 19682540d8a014522a319b1cf788aee2, type: 3}
+  - {fileID: 191266, guid: c44bd9bdc114d4a60932c0087d9d1732, type: 3}
 --- !u!1 &1775071006
 GameObject:
   m_ObjectHideFlags: 0
