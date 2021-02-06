@@ -48,6 +48,7 @@ public class PlayerControl : MonoBehaviour
                 rb.useGravity = false;
                 rb.angularVelocity = new Vector3(0, 0, 0);
 
+                // Create a lineRenderer to see the grapple
                 lnPoints[0] = transform.position;
                 lnPoints[1] = target;
                 lr.SetPositions(lnPoints);
@@ -73,7 +74,7 @@ public class PlayerControl : MonoBehaviour
         if (!gripped)
         {
             // Rotate using horizontal input
-            transform.Rotate(0, Input.GetAxis("Horizontal") * rotationSpeed, 0);
+            transform.Rotate(0, Input.GetAxis("Horizontal") * rotationSpeed * Time.deltaTime, 0);
 
             // Move using vertical input
             float input = Input.GetAxis("Vertical");
@@ -84,7 +85,7 @@ public class PlayerControl : MonoBehaviour
                 rb.angularVelocity = new Vector3(0, 0, 0);
         }
 
-        // Move toward target
+        // Move toward target with grapple
         if(gripped)
         {
             transform.position = Vector3.MoveTowards(transform.position, target, travelSpeed * Time.deltaTime);

@@ -8,16 +8,17 @@ using Emgu.CV.CvEnum;
 
 public class CreateTerrain : MonoBehaviour
 {
-    //[SerializeField] TerrainData terrainData = null;
     [SerializeField] string fileName = null;
     [SerializeField] bool inverse = false;
 
     private Image<Gray, byte> image;
     private Terrain terrain;
 
+    // Contains all the prefabs to instantiate
     public GameObject[] prefabs;
     public GameObject coinPrefab;
 
+    // Contains the index of the areas we see
     private List<int> seenIndexes;
 
     // Start is called before the first frame update
@@ -29,13 +30,14 @@ public class CreateTerrain : MonoBehaviour
         terrain = Terrain.activeTerrain;
         TerrainData terrainData = terrain.terrainData;
 
+        // Create image from file
         image = new Image<Gray, byte>(fileName);
-
         int imageHeight = image.Height;
         int imageWidth = image.Width;
 
         int terrainResolution = terrainData.heightmapResolution;
 
+        // Check if the image is at least as big as the terrain
         if (imageHeight < terrainResolution - 1 || imageWidth < terrainResolution - 1)
             Debug.LogError("Image to small");
         else
@@ -44,6 +46,7 @@ public class CreateTerrain : MonoBehaviour
 
             float[,] data = new float[terrainResolution - 1, terrainResolution - 1];
 
+            // Set the heights of the terrain depending on the grayscale of the image
             for (int y = 0; y < terrainResolution - 1; y++)
             {
                 for (int x = 0; x < terrainResolution - 1; x++)
@@ -57,21 +60,25 @@ public class CreateTerrain : MonoBehaviour
             terrainData.SetHeights(0, 0, data);
         }
 
+        // Get the "watershed image", divided into several areas
         Image<Gray, byte> ws = WaterShed.TestWaterShed(fileName);
         CvInvoke.Imshow("markers", ws * 10);
 
+        // Spawn prefabs on the terrain depending on the value of the watershed
         if (ws.Rows >= terrainResolution - 1 && ws.Cols >= terrainResolution - 1)
         {
             for (int i = 0; i < terrainResolution - 1; i += 10)
             {
                 for (int j = 0; j < terrainResolution - 1; j += 10)
                 {
+                    // Raycast on terrain to put the gameObject on the floor 
                     RaycastHit hit;
                     if (Physics.Raycast(new Vector3(i,1000,j), Vector3.down,out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
                     {
                         Vector3 spawnPoint = hit.point + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
                         GameObject go = Instantiate(PickPrefab(ws.Data[i,j,0]), spawnPoint, Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0f,360f),0)));
 
+                        // If we cross a new area, instantiate a coin
                         if(!seenIndexes.Contains(ws.Data[i, j, 0]))
                         {
                             seenIndexes.Add(ws.Data[i, j, 0]);

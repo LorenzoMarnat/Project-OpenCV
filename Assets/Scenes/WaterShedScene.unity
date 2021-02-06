@@ -249,8 +249,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   maxTravelSpeed: 50
-  rotationSpeed: 3
-  cameraRotationSpeed: 2
+  rotationSpeed: 50
+  cameraRotationSpeed: 40
 --- !u!54 &662933779
 Rigidbody:
   m_ObjectHideFlags: 0
