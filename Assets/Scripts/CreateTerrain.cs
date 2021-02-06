@@ -73,7 +73,7 @@ public class CreateTerrain : MonoBehaviour
                 {
                     // Raycast on terrain to put the gameObject on the floor 
                     RaycastHit hit;
-                    if (Physics.Raycast(new Vector3(i,1000,j), Vector3.down,out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
+                    if (Physics.Raycast(new Vector3(j,1000,i), Vector3.down,out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
                     {
                         Vector3 spawnPoint = hit.point + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
                         GameObject go = Instantiate(PickPrefab(ws.Data[i,j,0]), spawnPoint, Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0f,360f),0)));
