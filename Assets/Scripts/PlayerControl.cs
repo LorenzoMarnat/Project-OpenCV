@@ -57,7 +57,7 @@ public class PlayerControl : MonoBehaviour
         // If right click, rotate pov camera with mouse
         if (Input.GetMouseButton(1))
         {
-            Camera.main.transform.Rotate(new Vector3(Input.GetAxis("Mouse Y") * cameraRotationSpeed, -Input.GetAxis("Mouse X") * cameraRotationSpeed, 0));
+            Camera.main.transform.Rotate(new Vector3(Input.GetAxis("Mouse Y") * cameraRotationSpeed * Time.deltaTime, -Input.GetAxis("Mouse X") * cameraRotationSpeed * Time.deltaTime, 0));
             float X = Camera.main.transform.rotation.eulerAngles.x;
             float Y = Camera.main.transform.rotation.eulerAngles.y;
             Camera.main.transform.rotation = Quaternion.Euler(X, Y, 0);

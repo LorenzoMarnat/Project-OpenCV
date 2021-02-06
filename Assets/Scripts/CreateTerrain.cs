@@ -20,8 +20,8 @@ public class CreateTerrain : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Get the terrain's data
         terrain = Terrain.activeTerrain;
-
         TerrainData terrainData = terrain.terrainData;
 
         image = new Image<Gray, byte>(fileName);
