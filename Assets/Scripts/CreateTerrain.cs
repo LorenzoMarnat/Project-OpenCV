@@ -14,10 +14,12 @@ public class CreateTerrain : MonoBehaviour
 
     private Image<Gray, byte> image;
     private Terrain terrain;
+
+    public GameObject[] prefabs;
+
     // Start is called before the first frame update
     void Start()
     {
-        
         terrain = Terrain.activeTerrain;
 
         TerrainData terrainData = terrain.terrainData;
@@ -26,10 +28,8 @@ public class CreateTerrain : MonoBehaviour
 
         int imageHeight = image.Height;
         int imageWidth = image.Width;
-        Debug.Log(imageWidth + " " + imageHeight);
-        int terrainResolution = terrainData.heightmapResolution;
 
-        Debug.Log(terrainResolution);
+        int terrainResolution = terrainData.heightmapResolution;
 
         if (imageHeight < terrainResolution - 1 || imageWidth < terrainResolution - 1)
             Debug.LogError("Image to small");
@@ -39,19 +39,37 @@ public class CreateTerrain : MonoBehaviour
 
             float[,] data = new float[terrainResolution - 1, terrainResolution - 1];
 
-            //Debug.Log("height = " + data.Length + " width = ");
-
             for (int y = 0; y < terrainResolution - 1; y++)
             {
                 for (int x = 0; x < terrainResolution - 1; x++)
                 {
-                    if(!inverse)
+                    if (!inverse)
                         data[x, y] = image.Data[x, y, 0] / 255f;
                     else
                         data[x, y] = (255 - image.Data[x, y, 0]) / 255f;
                 }
             }
             terrainData.SetHeights(0, 0, data);
+        }
+
+        Image<Gray, byte> ws = WaterShed.TestWaterShed();
+        CvInvoke.Imshow("markers", ws);
+
+        int k = 0;
+        if (ws.Rows >= terrainResolution - 1 && ws.Cols >= terrainResolution - 1)
+        {
+            for (int i = 0; i < terrainResolution - 1; i += 10)
+            {
+                for (int j = 0; j < terrainResolution - 1; j += 10)
+                {
+                    RaycastHit hit;
+                    if (/*k%1024 == 0 &&*/ Physics.Raycast(new Vector3(i,1000,j), Vector3.down,out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
+                    {
+                        Instantiate(prefabs[0], hit.point, Quaternion.identity);
+                    }
+                    k++;
+                }
+            }
         }
     }
 

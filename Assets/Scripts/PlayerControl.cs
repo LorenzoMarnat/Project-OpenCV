@@ -15,12 +15,18 @@ public class PlayerControl : MonoBehaviour
     private float distanceToTarget;
 
     private Rigidbody rb;
+    private LineRenderer lr;
+
+    private Vector3[] lnPoints;
     // Start is called before the first frame update
     void Start()
     {
         gripped = false;
         rb = GetComponent<Rigidbody>();
+        lr = GetComponent<LineRenderer>();
         travelSpeed = moveSpeed;
+
+        lnPoints = new Vector3[2];
     }
 
     // Update is called once per frame
@@ -41,6 +47,10 @@ public class PlayerControl : MonoBehaviour
                 gripped = true;
                 rb.useGravity = false;
                 rb.angularVelocity = new Vector3(0, 0, 0);
+
+                lnPoints[0] = transform.position;
+                lnPoints[1] = target;
+                lr.SetPositions(lnPoints);
             }
         }
 
@@ -78,6 +88,8 @@ public class PlayerControl : MonoBehaviour
         if(gripped)
         {
             transform.position = Vector3.MoveTowards(transform.position, target, travelSpeed * Time.deltaTime);
+
+            lr.SetPosition(0, transform.position);
 
             if (travelSpeed < maxTravelSpeed)
                 travelSpeed += Time.deltaTime * 10;

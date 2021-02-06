@@ -5,7 +5,7 @@ using Emgu.CV.Util;
 using System.Drawing;
 using UnityEngine;
 
-public class WaterShed : MonoBehaviour
+public class WaterShed
 {
     // Start is called before the first frame update
     private void Start()
@@ -18,10 +18,10 @@ public class WaterShed : MonoBehaviour
     {
     }
 
-    public void TestWaterShed()
+    public static Image<Gray,byte> TestWaterShed()
     {
         //Load Image into Mat
-        Mat matImage = new Mat("water_coins.jpg");
+        Mat matImage = new Mat("balka.jpg");
 
         //Convert Mat Bgr to Gray
         Mat matGray = new Mat(matImage.Rows, matImage.Cols, DepthType.Cv8U, 1);
@@ -46,7 +46,7 @@ public class WaterShed : MonoBehaviour
 
         // sure background area
         Image<Bgr, byte> dilate = new Image<Bgr, byte>(opening.Width, opening.Height);
-        CvInvoke.Dilate(opening, dilate, structuringElement, new Point(-1, -1), 3, BorderType.Constant, new MCvScalar(0));
+        CvInvoke.Dilate(opening, dilate, structuringElement, new Point(-1, -1), 10, BorderType.Constant, new MCvScalar(0));
 
         //finding sure foreground area
         Mat labels = new Mat();
@@ -62,7 +62,7 @@ public class WaterShed : MonoBehaviour
         CvInvoke.MinMaxLoc(distTransform, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
 
         Image<Bgr, byte> sure_fg = new Image<Bgr, byte>(distTransform.Width, distTransform.Height);
-        CvInvoke.Threshold(distTransform, sure_fg, 0.7 * maxVal, 255, 0);
+        CvInvoke.Threshold(distTransform, sure_fg, 0.5 * maxVal, 255, 0);
 
         // Finding unknown region
         Mat matSure_fg = new Mat(sure_fg.Rows, sure_fg.Cols, DepthType.Cv8U, 3);
@@ -110,18 +110,20 @@ public class WaterShed : MonoBehaviour
         markers.ConvertTo(markers, DepthType.Cv32S);
         CvInvoke.Watershed(matImage, markers);
         markers.ConvertTo(markers, DepthType.Cv8U);
-
+        imgMarkers = markers.ToImage<Gray, byte>();
         // Show output image
         //CvInvoke.Imshow("Image", img);
         //CvInvoke.Imshow("imgGray", imgGray);
         //CvInvoke.Imshow("imgBinarize", imgBinarize);
         //CvInvoke.Imshow("opening", opening);
         //CvInvoke.Imshow("dilate", dilate);
-        CvInvoke.Imshow("matUnknown",  imgUnknown*10000);
-        CvInvoke.Imshow("distTransform", distTransform);
-        CvInvoke.Imshow("sure_fg", sure_fg);
-        CvInvoke.Imshow("matSure_fg", matSure_fg.ToImage<Bgr, byte>());
-        CvInvoke.Imshow("imgMarkers", imgMarkers*10);
-        CvInvoke.Imshow("markers", markers*10);
+        //CvInvoke.Imshow("matUnknown",  imgUnknown*10000);
+        //CvInvoke.Imshow("distTransform", distTransform);
+        //CvInvoke.Imshow("sure_fg", sure_fg);
+        //CvInvoke.Imshow("matSure_fg", matSure_fg.ToImage<Bgr, byte>());
+        //CvInvoke.Imshow("imgMarkers", imgMarkers*10);
+        //CvInvoke.Imshow("markers", imgMarkers*10);
+
+        return imgMarkers;
     }
 }
