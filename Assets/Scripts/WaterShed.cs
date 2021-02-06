@@ -7,21 +7,12 @@ using UnityEngine;
 
 public class WaterShed
 {
-    // Start is called before the first frame update
-    private void Start()
-    {
-        TestWaterShed();
-    }
 
-    // Update is called once per frame
-    private void Update()
-    {
-    }
 
-    public static Image<Gray,byte> TestWaterShed()
+    public static Image<Gray,byte> TestWaterShed(string file)
     {
         //Load Image into Mat
-        Mat matImage = new Mat("balka.jpg");
+        Mat matImage = new Mat(file);
 
         //Convert Mat Bgr to Gray
         Mat matGray = new Mat(matImage.Rows, matImage.Cols, DepthType.Cv8U, 1);
