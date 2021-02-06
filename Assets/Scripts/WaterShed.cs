@@ -104,13 +104,14 @@ public class WaterShed
             }
         }
 
-        Debug.Log(img.Mat.Depth + img.NumberOfChannels + " " + imgMarkers.Mat.Depth + imgMarkers.NumberOfChannels);
+        //Debug.Log(img.Mat.Depth + img.NumberOfChannels + " " + imgMarkers.Mat.Depth + imgMarkers.NumberOfChannels);
         matImage.ConvertTo(matImage, DepthType.Cv8U);
         markers = imgMarkers.Mat;
         markers.ConvertTo(markers, DepthType.Cv32S);
         CvInvoke.Watershed(matImage, markers);
         markers.ConvertTo(markers, DepthType.Cv8U);
         imgMarkers = markers.ToImage<Gray, byte>();
+
         // Show output image
         //CvInvoke.Imshow("Image", img);
         //CvInvoke.Imshow("imgGray", imgGray);

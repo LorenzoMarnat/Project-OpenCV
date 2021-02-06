@@ -76,6 +76,7 @@ public class CreateTerrain : MonoBehaviour
     {
         return prefabs[index % prefabs.Length];
     }
+
     // Update is called once per frame
     void Update()
     {
