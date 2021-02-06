@@ -20,8 +20,8 @@ public class CreateTerrain : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Get the terrain's data
         terrain = Terrain.activeTerrain;
-
         TerrainData terrainData = terrain.terrainData;
 
         image = new Image<Gray, byte>(fileName);
@@ -52,8 +52,8 @@ public class CreateTerrain : MonoBehaviour
             terrainData.SetHeights(0, 0, data);
         }
 
-        Image<Gray, byte> ws = WaterShed.TestWaterShed();
-        //CvInvoke.Imshow("markers", ws);
+        Image<Gray, byte> ws = WaterShed.TestWaterShed(fileName);
+        CvInvoke.Imshow("markers", ws * 10);
 
         int k = 0;
         if (ws.Rows >= terrainResolution - 1 && ws.Cols >= terrainResolution - 1)
@@ -65,7 +65,8 @@ public class CreateTerrain : MonoBehaviour
                     RaycastHit hit;
                     if (Physics.Raycast(new Vector3(i,1000,j), Vector3.down,out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
                     {
-                        Instantiate(PickPrefab(ws.Data[i,j,0]), hit.point, Quaternion.identity);
+                        Vector3 spawnPoint = hit.point + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
+                        GameObject go = Instantiate(PickPrefab(ws.Data[i,j,0]), spawnPoint, Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0f,360f),0)));
                     }
                     k++;
                 }
