@@ -76,6 +76,7 @@ public class WaterShed
         matSure_fg.ConvertTo(matSure_fg, DepthType.Cv8U);
 
 
+        // Get labels of regions
         int nLabels = CvInvoke.ConnectedComponents(matSure_fg, markers);
         Debug.Log("nLabels : " +nLabels);
         
@@ -84,6 +85,7 @@ public class WaterShed
 
         Image<Gray, byte> imgUnknown = matUnknown.ToImage<Gray, byte>();
 
+        // Initialise unknown regions datas to zero
         Image<Gray, byte> imgMarkers = markers.ToImage<Gray, byte>();
         for (int i = 0; i < markers.Rows; i++)
         {
@@ -96,6 +98,8 @@ public class WaterShed
             }
         }
 
+
+        // Watershed part
         //Debug.Log(img.Mat.Depth + img.NumberOfChannels + " " + imgMarkers.Mat.Depth + imgMarkers.NumberOfChannels);
         matImage.ConvertTo(matImage, DepthType.Cv8U);
         markers = imgMarkers.Mat;
