@@ -68,7 +68,7 @@ public class WaterShed
         // Find total markers
         Mat hierarchy = new Mat();
         VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
-        CvInvoke.FindContours(matSure_fg, contours, hierarchy, RetrType.External, ChainApproxMethod.ChainApproxSimple);
+        CvInvoke.FindContours(distTransform_8u, contours, hierarchy, RetrType.External, ChainApproxMethod.ChainApproxSimple);
 
         //Marker labelling
         Mat markers = Mat.Zeros(distTransform_8u.Rows, distTransform_8u.Cols, DepthType.Cv8S, 3);
@@ -107,15 +107,15 @@ public class WaterShed
         // Show output image
         //CvInvoke.Imshow("Image", img);
         //CvInvoke.Imshow("imgGray", imgGray);
-        CvInvoke.Imshow("imgBinarize", imgBinarize);
-        CvInvoke.Imshow("opening", opening);
-        CvInvoke.Imshow("dilate", dilate);
-        CvInvoke.Imshow("matUnknown",  imgUnknown*10000);
-        CvInvoke.Imshow("distTransform", distTransform);
-        CvInvoke.Imshow("sure_fg", sure_fg);
-        CvInvoke.Imshow("matSure_fg", matSure_fg.ToImage<Bgr, byte>());
+        //CvInvoke.Imshow("imgBinarize", imgBinarize);
+        //CvInvoke.Imshow("opening", opening);
+        //CvInvoke.Imshow("dilate", dilate);
+        //CvInvoke.Imshow("matUnknown",  imgUnknown*10000);
+        //CvInvoke.Imshow("distTransform", distTransform);
+        //CvInvoke.Imshow("sure_fg", sure_fg);
+        //CvInvoke.Imshow("matSure_fg", matSure_fg.ToImage<Bgr, byte>());
         //CvInvoke.Imshow("imgMarkers", imgMarkers*10);
-        CvInvoke.Imshow("markers", imgMarkers*10);
+        //CvInvoke.Imshow("markers", imgMarkers*10);
 
         return imgMarkers;
     }
